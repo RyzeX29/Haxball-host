@@ -1,7 +1,10 @@
 {
   "name": "haxball-host",
-  "version": "1.0.0",
+  "version": "1.0.0", 
   "scripts": {
-    "start": "npx serve -s -l 10000"
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "haxball.js": "^0.4.0"
   }
 }
