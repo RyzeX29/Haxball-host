@@ -6,19 +6,19 @@ function anunciarDiscord(room, getUltimoAnuncio, setUltimoAnuncio) {
   }
   setUltimoAnuncio(ahora);
 
-  const mensajeCompleto = `
-🎯 **ÚNETE A NUESTRO DISCORD**  
-🔍 **NECESITAMOS JUGADORES COMO TU**  
-🔗 **HAXAMPEONATO CHILENO: https://discord.gg/Gn5RuE8Yz9**
-
-⚽ **ÚNETE A NUESTRAS OTRAS LIGAS**  
-
-**PFx3 | PREMIER FLASH x3**  
-🔗 https://discord.gg/B5W3Hudxq3  
-
-**MSAx5 | MIERDATA SERIE A**  
-🔗 https://discord.gg/eXPU6hKjEm
-  `;
+  const mensajeCompleto = [
+    "🎯 **ÚNETE A NUESTRO DISCORD**",
+    "🔍 **NECESITAMOS JUGADORES COMO TU**",
+    "🔗 **HAXAMPEONATO CHILENO: https://discord.gg/Gn5RuE8Yz9**",
+    "",
+    "⚽ **ÚNETE A NUESTRAS OTRAS LIGAS**",
+    "",
+    "**PFx3 | PREMIER FLASH x3**",
+    "🔗 https://discord.gg/B5W3Hudxq3",
+    "",
+    "**MSAx5 | MIERDATA SERIE A**", 
+    "🔗 https://discord.gg/eXPU6hKjEm"
+  ].join('\n');
 
   room.sendChat(mensajeCompleto);
   console.log("📢 Anuncio de Discord enviado");
@@ -50,28 +50,28 @@ module.exports = {
 
       // ✅ COMANDO !help
       "!help": function(player) {
-        const ayuda = `
-🤖🏆 **COMANDOS BOT HFCx7:**
-!discord - Únete a nuestra comunidad y otras ligas
-!afk - Ponte modo espectador temporalmente
-!help - Muestra esta ayuda
-        `;
+        const ayuda = [
+          "🤖🏆 **COMANDOS BOT HFCx7:**",
+          "!discord - Únete a nuestra comunidad y otras ligas", 
+          "!afk - Ponte modo espectador temporalmente",
+          "!help - Muestra esta ayuda"
+        ].join('\n');
         room.sendChat(ayuda, player.id);
       },
 
       // ✅ COMANDO !comandos
       "!comandos": function(player) {
-        const ayuda = `
-🤖🏆 **COMANDOS BOT HFCx7:**
-!discord - Únete a nuestra comunidad y otras ligas
-!afk - Ponte modo espectador temporalmente
-!help - Muestra esta ayuda
-        `;
+        const ayuda = [
+          "🤖🏆 **COMANDOS BOT HFCx7:**",
+          "!discord - Únete a nuestra comunidad y otras ligas",
+          "!afk - Ponte modo espectador temporalmente", 
+          "!help - Muestra esta ayuda"
+        ].join('\n');
         room.sendChat(ayuda, player.id);
       }
     };
   },
 
-  // ✅ EXPORTAR FUNCIÓN DE ANUNCIO
-  annunciarDiscord: anunciarDiscord
+  // ✅ EXPORTAR FUNCIÓN DE ANUNCIO (CORREGIDO)
+  anunciarDiscord: anunciarDiscord
 };
