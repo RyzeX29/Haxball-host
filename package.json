@@ -1,10 +1,10 @@
 {
   "name": "haxball-host",
-  "version": "1.0.0", 
+  "version": "1.0.0",
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
-    "haxball.js": "^0.4.0"
+    "haxball.js": "github:hmello01/haxball.js"
   }
 }
