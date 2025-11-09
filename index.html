@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>HFCx7 - Host Haxball</title>
+</head>
+<body>
+    <script src="https://www.haxball.com/headless.js"></script>
+    <script>
+const roomConfig = {
+    roomName: "🔥⚽ HFCx7 - TODOS JUEGAN ⚽🔥",
+    playerName: "🏆 HOST HFCx7",
+    maxPlayers: 30,
+    public: true,
+    geo: { code: "CL", lat: -33.45, lon: -70.67 }
+};
+
+const roomSettings = {
+    noPlayer: true,
+    timeLimit: 5,
+    scoreLimit: 5,
+    stadium: "Big",
+    colors: ["FF0000", "0000FF", "00FF00", "FFFF00", "FF00FF", "00FFFF", "FFFFFF"],
+    teams: 2
+};
+
+class HFCx7Server {
+    constructor() {
+        this.room = null;
+        this.adminPassword = "HFCx7ADMIN69";
+        this.stats = { goals: {}, touches: {}, shots: {}, wins: {}, joins: {} };
+        this.isPaused = false;
+        this.musicEnabled = true;
+        this.roomLink = "";
+        this.init();
+    }
+
+    init() {
+        try {
+            this.room = window.HBInit(roomConfig);
+            this.setupRoom();
+            this.setupEventHandlers();
+            this.setupCustomCommands();
+        } catch (error) {
+            console.error("Error:", error);
+        }
+    }
+
+    setupRoom() {
+        this.room.setScoreLimit(roomSettings.scoreLimit);
+        this.room.setTimeLimit(roomSettings.timeLimit);
+        this.room.setTeamsLock(false);
+    }
+
+    setupEventHandlers() {
+        this.room.onPlayerJoin = (player) => {
+            this.initializePlayerStats(player);
+            this.room.sendChat("🎉 ¡BIENVENIDO A HFCx7!");
+            this.room.sendChat("🔑 Admin: !admin HFCx7ADMIN69");
+            this.room.sendChat("📝 !help para comandos");
+            this.stats.joins[player.id] = (this.stats.joins[player.id] || 0) + 1;
+        };
+
+        this.room.onPlayerLeave = (player) => {
+            this.room.sendChat(`😔 ${player.name} se fue`);
+        };
+
+        this.room.onTeamGoal = (team) => {
+            const teamNames = ["🔴 ROJOS", "🔵 AZULES", "🟢 VERDES", "🟡 AMARILLOS"];
+            this.room.sendChat(`⚽ ¡GOOOL DE ${teamNames[team]}!`);
+        };
+
+        this.room.onPlayerBallKick = (player) => {
+            this.stats.touches[player.id] = (this.stats.touches[player.id] || 0) + 1;
+        };
+
+        this.room.onPlayerChat = (player, message) => {
+            if (message.startsWith("!")) {
+                this.processCommand(player, message);
+                return false;
+            }
+            return true;
+        };
+
+        this.room.onGameStart = (byPlayer) => {
+            this.room.sendChat("🚀 ¡PARTIDO INICIADO!");
+        };
+
+        this.room.onGameStop = (byPlayer) => {
+            setTimeout(() => {
+                this.room.sendChat("🏁 PARTIDO TERMINADO");
+            }, 2000);
+        };
+
+        this.room.onRoomLink = (link) => {
+            this.roomLink = link;
+        };
+    }
+
+    setupCustomCommands() {
+        this.commandHandlers = {
+            "!help": (player) => this.showHelp(player),
+            "!admin": (player, args) => this.claimAdmin(player, args),
+            "!speed": (player, args) => this.setBallSpeed(player, args),
+            "!size": (player, args) => this.setBallSize(player, args),
+            "!kick": (player, args) => this.kickPlayer(player, args),
+            "!password": (player, args) => this.changePassword(player, args),
+            "!tiempo": (player, args) => this.changeTime(player, args),
+            "!goles": (player, args) => this.changeGoals(player, args)
+        };
+    }
+
+    processCommand(player, message) {
+        const args = message.split(" ");
+        const command = args[0].toLowerCase();
+        
+        if (this.commandHandlers[command]) {
+            this.commandHandlers[command](player, args.slice(1));
+        } else {
+            this.room.sendChat(`❌ Comando desconocido: ${command}`);
+        }
+    }
+
+    initializePlayerStats(player) {
+        this.stats.goals[player.id] = 0;
+        this.stats.touches[player.id] = 0;
+        this.stats.shots[player.id] = 0;
+        this.stats.wins[player.id] = 0;
+    }
+
+    showHelp(player) {
+        this.room.sendChat("📋 COMANDOS:");
+        this.room.sendChat("!admin HFCx7ADMIN69 - Reclamar admin");
+        this.room.sendChat("!help - Ver comandos");
+        if (player.admin) {
+            this.room.sendChat("👑 COMANDOS ADMIN:");
+            this.room.sendChat("!speed [1-10] - Velocidad balón");
+            this.room.sendChat("!size [1-10] - Tamaño balón");
+            this.room.sendChat("!kick [nombre] - Expulsar");
+            this.room.sendChat("!password [clave] - Cambiar password");
+            this.room.sendChat("!tiempo [min] - Cambiar tiempo");
+            this.room.sendChat("!goles [num] - Cambiar goles");
+        }
+    }
+
+    claimAdmin(player, args) {
+        const password = args[0];
+        if (password === this.adminPassword) {
+            this.room.setPlayerAdmin(player.id, true);
+            this.room.sendChat(`👑 ${player.name} ES ADMIN`);
+        } else {
+            this.room.sendChat("❌ Contraseña incorrecta");
+        }
+    }
+
+    setBallSpeed(player, args) {
+        if (!player.admin) return;
+        const speed = parseInt(args[0]);
+        if (speed >= 1 && speed <= 10) {
+            this.room.sendChat(`⚡ Velocidad: ${speed}/10`);
+        }
+    }
+
+    setBallSize(player, args) {
+        if (!player.admin) return;
+        const size = parseInt(args[0]);
+        if (size >= 1 && size <= 10) {
+            this.room.sendChat(`🎾 Tamaño: ${size}/10`);
+        }
+    }
+
+    kickPlayer(player, args) {
+        if (!player.admin) return;
+        const targetName = args.join(" ");
+        const targetPlayer = this.room.getPlayerList().find(p => 
+            p.name.toLowerCase().includes(targetName.toLowerCase()));
+        if (targetPlayer) {
+            this.room.kickPlayer(targetPlayer.id, "Expulsado", false);
+            this.room.sendChat(`🚫 ${targetPlayer.name} expulsado`);
+        }
+    }
+
+    changePassword(player, args) {
+        if (!player.admin) return;
+        const newPass = args[0];
+        this.room.setPassword(newPass);
+        this.room.sendChat(`🔑 Nueva password: ${newPass}`);
+    }
+
+    changeTime(player, args) {
+        if (!player.admin) return;
+        const time = parseInt(args[0]);
+        if (time >= 1 && time <= 10) {
+            this.room.setTimeLimit(time);
+            this.room.sendChat(`⏰ Tiempo: ${time} minutos`);
+        }
+    }
+
+    changeGoals(player, args) {
+        if (!player.admin) return;
+        const score = parseInt(args[0]);
+        if (score >= 1 && score <= 10) {
+            this.room.setScoreLimit(score);
+            this.room.sendChat(`⚽ Goles: ${score}`);
+        }
+    }
+}
+
+setTimeout(() => {
+    new HFCx7Server();
+}, 1000);
+    </script>
+</body>
+</html>
