@@ -9,7 +9,7 @@ HaxballJS.then((HBInit) => {
     noPlayer: false
   });
 
-  console.log("✔️ HOST DE HAXBALL FUNCTIONANDO!");
+  console.log("✔️ HOST DE HAXBALL FUNCIONANDO!");
   console.log("📌 Sala: 🔥⚽ HFCx7 - TODOS JUEGAN ⚽🔥");
 
   let botPlayer = null;
@@ -23,13 +23,19 @@ HaxballJS.then((HBInit) => {
     console.log("🔗 Enlace de la sala: " + link);
     
     setTimeout(() => {
-      botPlayer = room.connectBot();
-      if (botPlayer) {
-        room.setPlayerDiscProperties(botPlayer.id, {
-          name: "🤖🏆 BOT HFCx7"
-        });
+      try {
+        botPlayer = room.connectBot();
+        if (botPlayer) {
+          room.setPlayerDiscProperties(botPlayer.id, {
+            name: "🤖🏆 BOT HFCx7"
+          });
+          console.log("🤖 BOT conectado a la sala");
+        } else {
+          console.log("⚠️ No se pudo conectar el bot (sala llena?)");
+        }
+      } catch (error) {
+        console.log("❌ Error conectando bot:", error);
       }
-      console.log("🤖 BOT conectado a la sala");
     }, 2000);
   };
 
@@ -87,7 +93,7 @@ HaxballJS.then((HBInit) => {
     const scores = room.getScores();
     if (scores && (scores.red >= room.getScoreLimit() || scores.blue >= room.getScoreLimit())) {
       setTimeout(() => {
-        commands.annunciarDiscord(room, () => ultimoAnuncio, (valor) => { ultimoAnuncio = valor; });
+        commands.anunciarDiscord(room, () => ultimoAnuncio, (valor) => { ultimoAnuncio = valor; });
       }, 3000);
     }
   };
@@ -95,14 +101,14 @@ HaxballJS.then((HBInit) => {
   room.onGameStop = function() {
     console.log("🛑 Partido terminado");
     setTimeout(() => {
-      commands.annunciarDiscord(room, () => ultimoAnuncio, (valor) => { ultimoAnuncio = valor; });
+      commands.anunciarDiscord(room, () => ultimoAnuncio, (valor) => { ultimoAnuncio = valor; });
     }, 2000);
   };
 
   room.onTeamVictory = function(scores) {
     console.log("🏆 Equipo ganador!");
     setTimeout(() => {
-      commands.annunciarDiscord(room, () => ultimoAnuncio, (valor) => { ultimoAnuncio = valor; });
+      commands.anunciarDiscord(room, () => ultimoAnuncio, (valor) => { ultimoAnuncio = valor; });
     }, 4000);
   };
 
@@ -127,7 +133,7 @@ HaxballJS.then((HBInit) => {
   // ✅ ANUNCIOS AUTOMÁTICOS CADA 10 MINUTOS
   setInterval(() => {
     if (room.getPlayerList().length > 0) {
-      commands.annunciarDiscord(room, () => ultimoAnuncio, (valor) => { ultimoAnuncio = valor; });
+      commands.anunciarDiscord(room, () => ultimoAnuncio, (valor) => { ultimoAnuncio = valor; });
     }
   }, 10 * 60 * 1000);
 
