@@ -5,6 +5,6 @@
     "start": "node server.js"
   },
   "dependencies": {
-    "haxball.js": "^1.0.0"
+    "haxball-headless": "0.1.2"
   }
 }
