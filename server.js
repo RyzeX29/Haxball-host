@@ -2,7 +2,7 @@ const HaxballJS = require("haxball.js");
 
 HaxballJS.then((HBInit) => {
     const room = HBInit({
-        roomName: "🏆Todos juegan - HFCx7",
+        roomName: "🔥⚽ HFCx7 - TODOS JUEGAN ⚽🔥",
         maxPlayers: 30,
         public: true,
         noPlayer: true
