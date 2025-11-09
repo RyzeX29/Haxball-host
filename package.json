@@ -1,0 +1,7 @@
+{
+  "name": "haxball-host",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "npx serve -s -l 10000"
+  }
+}
